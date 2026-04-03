@@ -15,5 +15,8 @@ export const globalLimiter = rateLimit({
   max: env.RATE_LIMIT_MAX,
   standardHeaders: true,
   legacyHeaders: false,
+  // This disables the strict check that causes ERR_ERL_UNEXPECTED_X_FORWARDED_FOR.
+  // It ensures the limiter trusts the IP address resolved by Express.
+  validate: { xForwardedForHeader: false },
   message: ApiResponse.error('Too many requests, please try again later', 'RATE_LIMIT_EXCEEDED'),
 });

@@ -1,4 +1,4 @@
-import { cleanEnv, str, num, bool } from 'envalid';
+import { cleanEnv, str, num } from 'envalid';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -49,6 +49,6 @@ export const env = cleanEnv(envVars, {
   CORS_ORIGIN: str({ default: 'http://localhost:3000' }),
   RATE_LIMIT_WINDOW_MS: num({ default: 900000 }),
   RATE_LIMIT_MAX: num({ default: 100 }),
-  TRUST_PROXY: bool({ default: false }),
+  TRUST_PROXY: num({ default: 0 }),
   LOG_LEVEL: str({ choices: ['debug', 'info', 'warn', 'error', 'silent'], default: 'info' }),
 });

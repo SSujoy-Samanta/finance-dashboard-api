@@ -33,7 +33,8 @@ import auditRoutes from '@/modules/audit/audit.routes';
  */
 const app: Application = express();
 
-// Proxy Configuration
+// Proxy Configuration: We pass the exact number of hops to trust directly from env.
+// For cloud providers directly facing the internet (Railway/Render), this is 1.
 app.set('trust proxy', env.TRUST_PROXY);
 
 // Global Rate Limiter

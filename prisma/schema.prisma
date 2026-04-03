@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  ANALYST
+  VIEWER
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum RecordType {
+  INCOME
+  EXPENSE
+}
+
+enum AuditAction {
+  USER_CREATED
+  USER_UPDATED
+  USER_DEACTIVATED
+  RECORD_CREATED
+  RECORD_UPDATED
+  RECORD_DELETED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  /// @unique: Highjacked in migrations to be a partial unique index:
+  /// CREATE UNIQUE INDEX "users_email_key" ON "users"("email") WHERE ("deletedAt" IS NULL);
+  email         String //@unique
+  name          String
+  password      String
+  role          Role      @default(VIEWER)
+  status        Status    @default(ACTIVE)
+  emailVerified Boolean   @default(false)
+  refreshToken  String? // stored as bcrypt hash
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  records   FinancialRecord[]
+  auditLogs AuditLog[]
+
+  @@index([email])
+  @@index([role, status])
+  @@map("users")
+}
+
+model FinancialRecord {
+  id          String     @id @default(cuid())
+  amount      Decimal    @db.Decimal(15, 2)
+  type        RecordType
+  category    String
+  date        DateTime
+  notes       String?    @db.Text
+  /// Created via raw migration to support soft-deletion re-use:
+  /// CREATE UNIQUE INDEX "idx_financial_records_reference_active" ON "financial_records"("reference") WHERE ("deletedAt" IS NULL AND "reference" IS NOT NULL);
+  reference   String?
+  createdById String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+
+  createdBy User @relation(fields: [createdById], references: [id])
+
+  @@index([type, deletedAt])
+  @@index([category, deletedAt])
+  @@index([date, deletedAt])
+  @@index([amount, deletedAt])
+  @@index([createdById])
+  @@map("financial_records")
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  userId    String
+  action    AuditAction
+  entity    String
+  entityId  String
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

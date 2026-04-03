@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+dist/
+coverage/
+.pnpm-debug.log*
+
+# Prisma
+src/generated/
+.env
+.env.test
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml

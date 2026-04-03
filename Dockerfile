@@ -26,7 +26,7 @@ RUN SKIP_ENV_VALIDATION=true pnpm build
 RUN pnpm prune --prod
 
 # --- Stage 4: Production Runner ---
-FROM node:20-alpine AS runner
+FROM base AS runner
 WORKDIR /app
 
 # Install runtime dependencies

@@ -45,4 +45,3 @@ Dockerfile
 docker-compose.yml
 .dockerignore
 package-lock.json
-pnpm-lock.yaml

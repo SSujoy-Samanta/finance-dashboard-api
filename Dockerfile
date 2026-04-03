@@ -8,7 +8,7 @@ RUN apk add --no-cache libc6-compat openssl build-base python3 pkgconfig
 # --- Stage 2: Dependencies ---
 FROM base AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml ./
 # Install all dependencies (including devDependencies for build)
 RUN pnpm install --frozen-lockfile
 
@@ -50,4 +50,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
 
-CMD ["node", "dist/src/server.js"]
+CMD ["node", "dist/server.js"]

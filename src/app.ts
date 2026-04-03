@@ -84,7 +84,18 @@ app.get('/health', (_req, res) => {
 });
 
 // API Documentation
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
+let swaggerSpec: object;
+
+try {
+  // Try to load pre-generated swagger.json (Production)
+  // We use a try-catch because the file is generated during build
+  const { default: staticSpec } = await import('./generated/swagger/spec.json', { with: { type: 'json' } });
+  swaggerSpec = staticSpec;
+} catch (error) {
+  // Fallback to dynamic generation (Development)
+  swaggerSpec = swaggerJsdoc(swaggerOptions);
+}
+
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 
 // API Routes

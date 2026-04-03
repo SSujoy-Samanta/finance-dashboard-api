@@ -44,4 +44,3 @@ README.md
 Dockerfile
 docker-compose.yml
 .dockerignore
-package-lock.json

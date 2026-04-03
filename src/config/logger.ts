@@ -61,20 +61,26 @@ export function createLogger(options: CreateLoggerOptions): Logger {
   };
 
   // Pretty print in development only
-  if (isDev) {
-    return pino({
-      ...baseOptions,
-      transport: {
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          translateTime: 'SYS:HH:MM:ss',
-          ignore: 'pid,hostname,service,env',
-          messageFormat: '{msg}',
-          singleLine: false,
+  // Pre-check if pino-pretty should be avoided (e.g. in docker production even if NODE_ENV is hijacked)
+  if (isDev && env.LOG_LEVEL !== 'silent') {
+    try {
+      return pino({
+        ...baseOptions,
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            translateTime: 'SYS:HH:MM:ss',
+            ignore: 'pid,hostname,service,env',
+            messageFormat: '{msg}',
+            singleLine: false,
+          },
         },
-      },
-    });
+      });
+    } catch (e) {
+      // Fallback to standard structured logging if pino-pretty is missing or fails
+      console.warn('Pino-pretty not found, falling back to JSON logging');
+    }
   }
 
   // JSON in production — structured for log aggregators (Datadog, Loki etc)

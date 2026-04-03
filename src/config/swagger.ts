@@ -58,7 +58,13 @@ This API uses **JWT Bearer tokens** for authentication.
       { name: 'Audit',     description: '🔍 Audit Logs — System activity tracking' },
     ],
   },
-  apis: ['./src/modules/**/*.ts', './src/app.ts'],
+  apis: [
+    './src/modules/**/*.ts',
+    './src/app.ts',
+    './dist/modules/**/*.js',
+    './dist/app.js',
+    './modules/**/*.js',
+  ],
 };
 
 /**
@@ -705,6 +711,17 @@ export const swaggerUiOptions = {
       background: linear-gradient(135deg, rgba(16,217,138,0.2), rgba(16,217,138,0.1)) !important; 
       border: 1px solid var(--accent) !important; 
       color: var(--accent) !important;
+    }
+
+    /* Pure Logic 'Unauthorize' replacement: Swagger UI puts the '.authorize' class only on the Authorize button. The Logout button lacks it! */
+    .swagger-ui .auth-btn-wrapper .btn:first-child:not(.authorize) {
+      font-size: 0 !important;
+    }
+
+    .swagger-ui .auth-btn-wrapper .btn:first-child:not(.authorize)::before {
+      content: 'Unauthorize';
+      font-size: 13px !important;
+      visibility: visible !important;
     }
 
     .swagger-ui .auth-container .auth-btn-wrapper .btn:first-child:hover {

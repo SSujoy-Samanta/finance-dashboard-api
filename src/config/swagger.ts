@@ -1,5 +1,4 @@
 import { Options } from 'swagger-jsdoc';
-import { env } from './env';
 
 /**
  * Swagger/OpenAPI configuration.
@@ -35,8 +34,8 @@ This API uses **JWT Bearer tokens** for authentication.
     },
     servers: [
       {
-        url: `http://localhost:${env.PORT}/api`,
-        description: '🔧 Local Development',
+        url: '/api',
+        description: 'Default (Auto-detected)',
       },
     ],
     components: {
